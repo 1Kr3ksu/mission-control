@@ -1,4 +1,4 @@
-// Mission Control Manager - Kompletny system w ~50 linjkach
+
 let misje = [];
 let output = document.getElementById('log');
 

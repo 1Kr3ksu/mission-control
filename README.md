@@ -122,8 +122,8 @@ Wszystkie funkcje zawierają kompleksowe sprawdzanie:
 
 ## 🚀 Uruchomienie
 
-```bash
-node script.js
-```
+
+Uruchom plik w przeglądarce.
+
 
 System automatycznie przeprowadzi demonstrację wszystkich funkcjonalności!

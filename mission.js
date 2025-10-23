@@ -1,6 +1,6 @@
 // Mission Control Manager - Kompletny system w ~50 linjkach
 let misje = [];
-let output = document.getElementById('output');
+let output = document.getElementById('log');
 
 function log(msg) {
     output.innerHTML += new Date().toLocaleTimeString() + ' - ' + msg + '<br>';
@@ -60,18 +60,18 @@ function symulujAwarie(misja) {
 }
 
 function updateSelect() {
-    let select = document.getElementById('misjaSelect');
+    let select = document.getElementById('misja');
     select.innerHTML = '<option value="">Wybierz misję</option>';
     misje.forEach((m, i) => select.innerHTML += `<option value="${i}">${m.nazwa} (${m.typ})</option>`);
 }
 
 // Funkcje interfejsu
 function stworzMisje() { zaplanujMisje(document.getElementById('nazwa').value, document.getElementById('typ').value); document.getElementById('nazwa').value = ''; }
-function dodajCzlonka() { let i = document.getElementById('misjaSelect').value; if (i !== '') { dodajDoZalogi(misje[i], document.getElementById('czlonek').value); document.getElementById('czlonek').value = ''; } }
-function dodajSprzet() { let i = document.getElementById('misjaSelect').value; if (i !== '') { zaladujSprzet(misje[i], document.getElementById('sprzet').value); document.getElementById('sprzet').value = ''; } }
-function przemierz() { let i = document.getElementById('misjaSelect').value; if (i !== '') { przemierzDystans(misje[i], +document.getElementById('dystans').value); document.getElementById('dystans').value = ''; } }
-function raport() { let i = document.getElementById('misjaSelect').value; if (i !== '') log(raportMisji(misje[i])); }
-function awaria() { let i = document.getElementById('misjaSelect').value; if (i !== '') symulujAwarie(misje[i]); }
+function dodajCzlonka() { let i = document.getElementById('misja').value; if (i !== '') { dodajDoZalogi(misje[i], document.getElementById('czlonek').value); document.getElementById('czlonek').value = ''; } }
+function dodajSprzet() { let i = document.getElementById('misja').value; if (i !== '') { zaladujSprzet(misje[i], document.getElementById('sprzet').value); document.getElementById('sprzet').value = ''; } }
+function przemierz() { let i = document.getElementById('misja').value; if (i !== '') { przemierzDystans(misje[i], +document.getElementById('dystans').value); document.getElementById('dystans').value = ''; } }
+function raport() { let i = document.getElementById('misja').value; if (i !== '') log(raportMisji(misje[i])); }
+function awaria() { let i = document.getElementById('misja').value; if (i !== '') symulujAwarie(misje[i]); }
 
 // Inicjalizacja
 document.addEventListener('DOMContentLoaded', () => {

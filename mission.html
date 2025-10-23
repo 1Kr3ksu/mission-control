@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mission Control</title>
+    <style>
+        body { font-family: Arial; max-width: 800px; margin: 0 auto; padding: 20px; background: #1a1a2e; color: white; }
+        input, select, button { padding: 8px; margin: 5px; border: none; border-radius: 3px; }
+        button { background: #0f3460; color: white; cursor: pointer; }
+        button:hover { background: #e94560; }
+        #log { background: #000; color: #00ff00; padding: 10px; height: 300px; overflow-y: auto; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Mission Control Manager</h1>
+    
+    <input id="nazwa" placeholder="Nazwa misji">
+    <select id="typ"><option>Badawcza</option><option>Transportowa</option><option>Kolonizacyjna</option></select>
+    <button onclick="stworzMisje()">Stwórz</button><br>
+    
+    <select id="misja"></select>
+    <input id="czlonek" placeholder="Członek załogi">
+    <button onclick="dodajCzlonka()">Dodaj</button>
+    <input id="sprzet" placeholder="Sprzęt">
+    <button onclick="dodajSprzet()">Załaduj</button>
+    <input id="dystans" type="number" placeholder="Dystans AU">
+    <button onclick="przemierz()">Przemierz</button>
+    <button onclick="raport()">Raport</button>
+    <button onclick="awaria()">Awaria</button>
+    
+    <div id="log"></div>
+
+    <script>
+let misje = [];
+function log(msg) { document.getElementById('log').innerHTML += new Date().toLocaleTimeString() + ' - ' + msg + '<br>'; }
+
+function zaplanujMisje(nazwa, typ) {
+    if (!nazwa || nazwa.length < 5) { log('❌ Nazwa za krótka (min 5 znaków)'); return null; }
+    if (misje.find(m => m.nazwa === nazwa)) { log('❌ Misja już istnieje'); return null; }
+    
+    let zaloga = typ === 'Badawcza' ? ['Pilot', 'Biolog', 'Inżynier'] : 
+                 typ === 'Transportowa' ? ['Pilot', 'Logistyk'] : ['Architekt', 'Medyk'];
+    let cele = typ === 'Badawcza' ? ['Analiza próbek', 'Badanie atmosfery'] :
+               typ === 'Transportowa' ? ['Transport ładunku'] : ['Budowa bazy'];
+    let sprzet = typ === 'Badawcza' ? ['Spektrometr', 'Laboratorium'] :
+                 typ === 'Transportowa' ? ['Dźwig', 'Kontenery'] : ['Generator', 'Moduł'];
+    
+    let misja = { nazwa, typ, zaloga, dystans: 0, cele, sprzet, zapasy: 100 };
+    misje.push(misja);
+    log('✅ Misja "' + nazwa + '" utworzona');
+    updateSelect();
+    return misja;
+}
+
+function dodajDoZalogi(misja, czlonek) {
+    if (!czlonek || misja.zaloga.includes(czlonek)) { log('❌ Błędny członek załogi'); return; }
+    misja.zaloga.push(czlonek);
+    log('✅ Dodano: ' + czlonek);
+}
+
+function zaladujSprzet(misja, sprzet) {
+    if (!sprzet || misja.sprzet.includes(sprzet)) { log('❌ Błędny sprzęt'); return; }
+    misja.sprzet.push(sprzet);
+    misja.zapasy += 20;
+    log('✅ Załadowano: ' + sprzet);
+}
+
+function przemierzDystans(misja, odleglosc) {
+    if (odleglosc <= 0) { log('❌ Błędna odległość'); return; }
+    misja.dystans += odleglosc;
+    misja.zapasy -= odleglosc * 5;
+    log('✅ Przemierzono ' + odleglosc + ' AU (łącznie: ' + misja.dystans + ' AU)');
+}
+
+function raportMisji(misja) {
+    return `
+*** RAPORT: ${misja.nazwa} ***
+Typ: ${misja.typ} | Dystans: ${misja.dystans} AU | Zapasy: ${Math.round(misja.zapasy)}%
+Załoga (${misja.zaloga.length}): ${misja.zaloga.join(', ')}
+Sprzęt (${misja.sprzet.length}): ${misja.sprzet.join(', ')}
+Cele (${misja.cele.length}): ${misja.cele.join(', ')}`;
+}
+
+function symulujAwarie(misja) {
+    if (Math.random() > 0.25) { log('✅ Systemy OK'); return; }
+    if (Math.random() > 0.5 && misja.sprzet.length > 0) {
+        let utracony = misja.sprzet.splice(Math.floor(Math.random() * misja.sprzet.length), 1)[0];
+        log('⚠️ AWARIA! Utracono: ' + utracony);
+    } else {
+        misja.zapasy -= 50;
+        log('⚠️ AWARIA! Utracono 50% zapasów');
+    }
+}
+
+function updateSelect() {
+    let select = document.getElementById('misja');
+    select.innerHTML = '<option value="">Wybierz misję</option>';
+    misje.forEach((m, i) => select.innerHTML += `<option value="${i}">${m.nazwa}</option>`);
+}
+
+function stworzMisje() { zaplanujMisje(document.getElementById('nazwa').value, document.getElementById('typ').value); }
+function dodajCzlonka() { let i = document.getElementById('misja').value; if (i) dodajDoZalogi(misje[i], document.getElementById('czlonek').value); }
+function dodajSprzet() { let i = document.getElementById('misja').value; if (i) zaladujSprzet(misje[i], document.getElementById('sprzet').value); }
+function przemierz() { let i = document.getElementById('misja').value; if (i) przemierzDystans(misje[i], +document.getElementById('dystans').value); }
+function raport() { let i = document.getElementById('misja').value; if (i) log(raportMisji(misje[i])); }
+function awaria() { let i = document.getElementById('misja').value; if (i) symulujAwarie(misje[i]); }
+
+log('🚀 Mission Control Manager gotowy!');
+    </script>
+</body>
+</html>
